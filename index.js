@@ -1,6 +1,15 @@
 import openai from "./openaiConfig.js";
+import { initializeApp } from "firebase/app";
+import { getDatabase, ref } from "firebase/database";
 
 const chatbotConversation = document.getElementById("chatbot-conversation");
+const appSettings = {
+  databaseURL:
+    "https://wise-owl-e4e5f-default-rtdb.europe-west1.firebasedatabase.app/",
+};
+const app = initializeApp(appSettings);
+const database = getDatabase(app);
+const conversationInDb = ref(database);
 
 const conversationArr = [
   {
@@ -30,8 +39,12 @@ async function fetchReply() {
   const response = await openai.createChatCompletion({
     model: "gpt-3.5-turbo",
     messages: conversationArr,
+    temperature: 0.7,
+    presence_penalty: 0,
+    frequency_penalty: 0.2,
   });
-  console.log(response.data.choices[0].message);
+  conversationArr.push(response.data.choices[0].message);
+  renderTypewriterText(response.data.choices[0].message.content);
 }
 
 function renderTypewriterText(text) {
