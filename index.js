@@ -1,4 +1,6 @@
 import { get, remove } from "firebase/database";
+import { conversationInDb } from "./openai.js";
+
 document.addEventListener("submit", async (e) => {
   e.preventDefault();
   const userInput = document.getElementById("user-input").value;

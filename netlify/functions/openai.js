@@ -16,30 +16,7 @@ const instructionObj = {
   content: "You are an assistant that gives very short answers.",
 };
 
-exports.handler = async (event, context) => {
-  if (event.httpMethod === "POST") {
-    const requestBody = JSON.parse(event.body);
-    const userInput = requestBody.userInput;
-    push(conversationInDb, {
-      role: "user",
-      content: userInput,
-    });
-    await fetchReply();
-    const response = {
-      statusCode: 200,
-      body: JSON.stringify({ message: "Reply fetched successfully!" }),
-    };
-    return response;
-  }
-
-  const response = {
-    statusCode: 400,
-    body: JSON.stringify({ message: "Invalid request method" }),
-  };
-  return response;
-};
-
-async function fetchReply() {
+export async function fetchReply() {
   const snapshot = await get(conversationInDb);
   if (snapshot.exists()) {
     const conversationArr = Object.values(snapshot.val());
