@@ -16,8 +16,6 @@ const instructionObj = {
   content: "You are an assistant that gives very short answers.",
 };
 
-// Rest of the code...
-
 export async function fetchReply() {
   const snapshot = await get(conversationInDb);
   if (snapshot.exists()) {
