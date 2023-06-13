@@ -1,4 +1,4 @@
-import openai from "./openaiConfig.js";
+import openai from "../../openaiConfig.js";
 import { initializeApp } from "firebase/app";
 import { getDatabase, ref, push, get } from "firebase/database";
 
