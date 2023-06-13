@@ -1,50 +1,28 @@
-import openai from "./openaiConfig.js";
-import { initializeApp } from "firebase/app";
-import { getDatabase, ref } from "firebase/database";
-
-const chatbotConversation = document.getElementById("chatbot-conversation");
-const appSettings = {
-  databaseURL:
-    "https://wise-owl-e4e5f-default-rtdb.europe-west1.firebasedatabase.app/",
-};
-const app = initializeApp(appSettings);
-const database = getDatabase(app);
-const conversationInDb = ref(database);
-
-const conversationArr = [
-  {
-    role: "system",
-    content:
-      "You are a highly knowledgeable assistant that is always happy to help.",
-  },
-];
-
-document.addEventListener("submit", (e) => {
+document.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const userInput = document.getElementById("user-input");
-  conversationArr.push({
-    role: "user",
-    content: userInput.value,
+  const userInput = document.getElementById("user-input").value;
+
+  const response = await fetch("/.netlify/functions/openai", {
+    method: "POST",
+    body: JSON.stringify({ userInput }),
   });
-  fetchReply();
-  const newSpeechBubble = document.createElement("div");
-  newSpeechBubble.classList.add("speech", "speech-human");
-  chatbotConversation.appendChild(newSpeechBubble);
-  newSpeechBubble.textContent = userInput.value;
-  userInput.value = "";
-  chatbotConversation.scrollTop = chatbotConversation.scrollHeight;
+
+  if (response.ok) {
+    const data = await response.json();
+    const reply = data.reply;
+    renderUserInput(userInput);
+    renderTypewriterText(reply);
+  } else {
+    console.error("Failed to fetch reply from OpenAI API");
+  }
 });
 
-async function fetchReply() {
-  const response = await openai.createChatCompletion({
-    model: "gpt-3.5-turbo",
-    messages: conversationArr,
-    temperature: 0.7,
-    presence_penalty: 0,
-    frequency_penalty: 0.2,
-  });
-  conversationArr.push(response.data.choices[0].message);
-  renderTypewriterText(response.data.choices[0].message.content);
+function renderUserInput(text) {
+  const newSpeechBubble = document.createElement("div");
+  newSpeechBubble.classList.add("speech", "speech-human");
+  newSpeechBubble.textContent = text;
+  chatbotConversation.appendChild(newSpeechBubble);
+  chatbotConversation.scrollTop = chatbotConversation.scrollHeight;
 }
 
 function renderTypewriterText(text) {
@@ -62,3 +40,28 @@ function renderTypewriterText(text) {
     chatbotConversation.scrollTop = chatbotConversation.scrollHeight;
   }, 50);
 }
+
+function renderConversationFromDb() {
+  get(conversationInDb).then(async (snapshot) => {
+    if (snapshot.exists()) {
+      Object.values(snapshot.val()).forEach((dbObj) => {
+        const newSpeechBubble = document.createElement("div");
+        newSpeechBubble.classList.add(
+          "speech",
+          `speech-${dbObj.role === "user" ? "human" : "ai"}`
+        );
+        newSpeechBubble.textContent = dbObj.content;
+        chatbotConversation.appendChild(newSpeechBubble);
+      });
+      chatbotConversation.scrollTop = chatbotConversation.scrollHeight;
+    }
+  });
+}
+
+document.getElementById("clear-btn").addEventListener("click", () => {
+  remove(conversationInDb);
+  chatbotConversation.innerHTML =
+    '<div class="speech speech-ai">How can I help you?</div>';
+});
+
+renderConversationFromDb();
