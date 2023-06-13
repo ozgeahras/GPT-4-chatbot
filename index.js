@@ -1,10 +1,4 @@
-import { Configuration, OpenAIApi } from "openai";
-
-const configuration = new Configuration({
-  apiKey: import.meta.env.OPENAI_API_KEY,
-});
-
-const openai = new OpenAIApi(configuration);
+import openai from "./openaiConfig.js";
 
 const chatbotConversation = document.getElementById("chatbot-conversation");
 
@@ -33,7 +27,11 @@ document.addEventListener("submit", (e) => {
 });
 
 async function fetchReply() {
-  const response = await openai.createChatCompletion({});
+  const response = await openai.createChatCompletion({
+    model: "gpt-3.5-turbo",
+    messages: conversationArr,
+  });
+  console.log(response.data.choices[0].message);
 }
 
 function renderTypewriterText(text) {
