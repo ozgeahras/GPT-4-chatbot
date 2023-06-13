@@ -1,6 +1,6 @@
 import openai from "./openaiConfig.js";
 import { initializeApp } from "firebase/app";
-import { getDatabase, ref, push, get, remove } from "firebase/database";
+import { getDatabase, ref, push, get } from "firebase/database";
 
 const chatbotConversation = document.getElementById("chatbot-conversation");
 const appSettings = {

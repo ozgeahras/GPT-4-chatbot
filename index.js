@@ -1,3 +1,4 @@
+import { get, remove } from "firebase/database";
 document.addEventListener("submit", async (e) => {
   e.preventDefault();
   const userInput = document.getElementById("user-input").value;
