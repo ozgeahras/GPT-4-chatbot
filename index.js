@@ -1,6 +1,8 @@
 import { get, remove } from "firebase/database";
 import { conversationInDb } from "./netlify/functions/openai.js";
 
+const chatbotConversation = document.getElementById("chatbot-conversation");
+
 document.addEventListener("submit", async (e) => {
   e.preventDefault();
   const userInput = document.getElementById("user-input").value;
