@@ -1,4 +1,5 @@
 import openai from "../../openaiConfig.js";
+
 import { initializeApp } from "firebase/app";
 import { getDatabase, ref, push, get } from "firebase/database";
 
@@ -8,12 +9,14 @@ const appSettings = {
 };
 const app = initializeApp(appSettings);
 const database = getDatabase(app);
-const conversationInDb = ref(database);
+export const conversationInDb = ref(database); // Export conversationInDb
 
 const instructionObj = {
   role: "system",
   content: "You are an assistant that gives very short answers.",
 };
+
+// Rest of the code...
 
 export async function fetchReply() {
   const snapshot = await get(conversationInDb);
