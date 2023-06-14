@@ -3,16 +3,16 @@ import { Configuration, OpenAIApi } from "openai";
 const configuration = new Configuration({
   apiKey: process.env.VITE_OPENAI_API_KEY,
 });
-console.log("openai cagrildi");
-console.log(
-  "process.env.VITE_OPENAI_API_KEY -->",
-  process.env.VITE_OPENAI_API_KEY
-);
 
 const openai = new OpenAIApi(configuration);
 
 export async function handler(event) {
   try {
+    console.log("openai cagrildi");
+    console.log(
+      "process.env.VITE_OPENAI_API_KEY -->",
+      process.env.VITE_OPENAI_API_KEY
+    );
     const { messages } = JSON.parse(event.body);
     const conversationArr = [...messages];
     const response = await openai.createChatCompletion({
@@ -23,7 +23,7 @@ export async function handler(event) {
     });
 
     const reply = response.data.choices[0].message.content;
-
+    console.log("reply-->", reply);
     return {
       statusCode: 200,
       body: JSON.stringify({ reply }),
@@ -31,7 +31,7 @@ export async function handler(event) {
   } catch (error) {
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: "Something went wrong" }),
+      body: JSON.stringify({ error: "Something went wrong" }, error),
     };
   }
 }
