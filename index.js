@@ -23,17 +23,24 @@ document.addEventListener("submit", (e) => {
 
   if (inputContent) {
     // Check if the input content is not empty
-    push(conversationInDb, {
+    const messageObj = {
       role: "user",
       content: inputContent,
-    });
-    fetchReply();
-    const newSpeechBubble = document.createElement("div");
-    newSpeechBubble.classList.add("speech", "speech-human");
-    chatbotConversation.appendChild(newSpeechBubble);
-    newSpeechBubble.textContent = inputContent;
-    userInput.value = "";
-    chatbotConversation.scrollTop = chatbotConversation.scrollHeight;
+    };
+
+    push(conversationInDb, messageObj)
+      .then(() => {
+        fetchReply(messageObj);
+        const newSpeechBubble = document.createElement("div");
+        newSpeechBubble.classList.add("speech", "speech-human");
+        chatbotConversation.appendChild(newSpeechBubble);
+        newSpeechBubble.textContent = inputContent;
+        userInput.value = "";
+        chatbotConversation.scrollTop = chatbotConversation.scrollHeight;
+      })
+      .catch((error) => {
+        console.error("Error pushing message to database:", error);
+      });
   }
 });
 
