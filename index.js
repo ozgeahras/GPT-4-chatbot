@@ -1,33 +1,56 @@
-import { get, remove } from "firebase/database";
-import { conversationInDb } from "./netlify/functions/openai.js";
+import { initializeApp } from "firebase/app";
+import { getDatabase, ref, push, get, remove } from "firebase/database";
 
+const appSettings = {
+  databaseURL:
+    "https://knowitall-openai-default-rtdb.europe-west1.firebasedatabase.app/",
+};
+
+const app = initializeApp(appSettings);
+const database = getDatabase(app);
+const conversationInDb = ref(database);
 const chatbotConversation = document.getElementById("chatbot-conversation");
 
-document.addEventListener("submit", async (e) => {
+const instructionObj = {
+  role: "system",
+  content: "You are a helpful assistant.",
+};
+
+document.addEventListener("submit", (e) => {
   e.preventDefault();
-  const userInput = document.getElementById("user-input").value;
-
-  const response = await fetch("/.netlify/functions/openai", {
-    method: "POST",
-    body: JSON.stringify({ userInput }),
+  const userInput = document.getElementById("user-input");
+  push(conversationInDb, {
+    role: "user",
+    content: userInput.value,
   });
-
-  if (response.ok) {
-    const data = await response.json();
-    const reply = data.reply;
-    renderUserInput(userInput);
-    renderTypewriterText(reply);
-  } else {
-    console.error("Failed to fetch reply from OpenAI API");
-  }
-});
-
-function renderUserInput(text) {
+  fetchReply();
   const newSpeechBubble = document.createElement("div");
   newSpeechBubble.classList.add("speech", "speech-human");
-  newSpeechBubble.textContent = text;
   chatbotConversation.appendChild(newSpeechBubble);
+  newSpeechBubble.textContent = userInput.value;
+  userInput.value = "";
   chatbotConversation.scrollTop = chatbotConversation.scrollHeight;
+});
+
+function fetchReply() {
+  get(conversationInDb).then(async (snapshot) => {
+    if (snapshot.exists()) {
+      const conversationArr = Object.values(snapshot.val());
+      conversationArr.unshift(instructionObj);
+      const response = await fetch("/.netlify/functions/openai", {
+        method: "POST",
+        body: JSON.stringify({ messages: conversationArr }),
+      });
+      const { reply } = await response.json();
+      push(conversationInDb, {
+        role: "ai",
+        content: reply,
+      });
+      renderTypewriterText(reply);
+    } else {
+      console.log("No data available");
+    }
+  });
 }
 
 function renderTypewriterText(text) {
@@ -46,6 +69,12 @@ function renderTypewriterText(text) {
   }, 50);
 }
 
+document.getElementById("clear-btn").addEventListener("click", () => {
+  remove(conversationInDb);
+  chatbotConversation.innerHTML =
+    '<div class="speech speech-ai">How can I help you?</div>';
+});
+
 function renderConversationFromDb() {
   get(conversationInDb).then(async (snapshot) => {
     if (snapshot.exists()) {
@@ -55,18 +84,12 @@ function renderConversationFromDb() {
           "speech",
           `speech-${dbObj.role === "user" ? "human" : "ai"}`
         );
-        newSpeechBubble.textContent = dbObj.content;
         chatbotConversation.appendChild(newSpeechBubble);
+        newSpeechBubble.textContent = dbObj.content;
       });
       chatbotConversation.scrollTop = chatbotConversation.scrollHeight;
     }
   });
 }
-
-document.getElementById("clear-btn").addEventListener("click", () => {
-  remove(conversationInDb);
-  chatbotConversation.innerHTML =
-    '<div class="speech speech-ai">How can I help you?</div>';
-});
 
 renderConversationFromDb();

@@ -1,43 +1,33 @@
 import { Configuration, OpenAIApi } from "openai";
-
-import { initializeApp } from "firebase/app";
-import { getDatabase, ref, push, get } from "firebase/database";
+import { process } from "../../.env";
 
 const configuration = new Configuration({
-  organization: "org-8sBBKnnzpa0m1QQdIgYJtvhS",
   apiKey: process.env.VITE_OPENAI_API_KEY,
 });
-delete configuration.baseOptions.headers["User-Agent"];
+
 const openai = new OpenAIApi(configuration);
 
-const appSettings = {
-  databaseURL:
-    "https://wise-owl-e4e5f-default-rtdb.europe-west1.firebasedatabase.app/",
-};
-const app = initializeApp(appSettings);
-const database = getDatabase(app);
-export const conversationInDb = ref(database); // Export conversationInDb
-
-const instructionObj = {
-  role: "system",
-  content: "You are an assistant that gives very short answers.",
-};
-
-export async function fetchReply() {
-  const snapshot = await get(conversationInDb);
-  if (snapshot.exists()) {
-    const conversationArr = Object.values(snapshot.val());
-    conversationArr.unshift(instructionObj);
+export async function handler(event, context) {
+  try {
+    const { messages } = JSON.parse(event.body);
+    const conversationArr = [...messages];
     const response = await openai.createChatCompletion({
       model: "gpt-3.5-turbo",
       messages: conversationArr,
       presence_penalty: 0,
       frequency_penalty: 0.3,
     });
-    push(conversationInDb, response.data.choices[0].message);
-    return response.data.choices[0].message.content;
-  } else {
-    console.log("No data available");
-    return "";
+
+    const reply = response.data.choices[0].message.content;
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ reply }),
+    };
+  } catch (error) {
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: "Something went wrong" }),
+    };
   }
 }
