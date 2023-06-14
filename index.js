@@ -38,8 +38,11 @@ function fetchReply() {
   get(conversationInDb).then(async (snapshot) => {
     console.log("-get db basladi-");
     if (snapshot.exists()) {
+      console.log("-snapshot.exists-");
       const conversationArr = Object.values(snapshot.val());
+      console.log("-conversationArr-", conversationArr);
       conversationArr.unshift(instructionObj);
+      console.log("-conversationArr-", conversationArr);
       const response = await fetch("/.netlify/functions/openai", {
         method: "POST",
         body: JSON.stringify({ messages: conversationArr }),

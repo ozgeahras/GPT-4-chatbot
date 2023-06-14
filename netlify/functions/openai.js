@@ -3,7 +3,7 @@ import { Configuration, OpenAIApi } from "openai";
 const configuration = new Configuration({
   apiKey: process.env.VITE_OPENAI_API_KEY,
 });
-
+console.log("openai cagrildi");
 console.log(
   "process.env.VITE_OPENAI_API_KEY -->",
   process.env.VITE_OPENAI_API_KEY
