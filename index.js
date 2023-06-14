@@ -23,6 +23,7 @@ document.addEventListener("submit", (e) => {
     role: "user",
     content: userInput.value,
   });
+  console.log("userInput-->", userInput);
   fetchReply();
   const newSpeechBubble = document.createElement("div");
   newSpeechBubble.classList.add("speech", "speech-human");
@@ -33,7 +34,9 @@ document.addEventListener("submit", (e) => {
 });
 
 function fetchReply() {
+  console.log("-fetch reply basladi-");
   get(conversationInDb).then(async (snapshot) => {
+    console.log("-get db basladi-");
     if (snapshot.exists()) {
       const conversationArr = Object.values(snapshot.val());
       conversationArr.unshift(instructionObj);
@@ -41,11 +44,13 @@ function fetchReply() {
         method: "POST",
         body: JSON.stringify({ messages: conversationArr }),
       });
+
       const { reply } = await response.json();
       push(conversationInDb, {
         role: "ai",
         content: reply,
       });
+      console.log("-response-", reply);
       renderTypewriterText(reply);
     } else {
       console.log("No data available");
