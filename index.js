@@ -23,7 +23,7 @@ document.addEventListener("submit", (e) => {
     role: "user",
     content: userInput.value,
   });
-  console.log("userInput-->", userInput);
+  console.log("userInput-->", userInput.value);
   fetchReply();
   const newSpeechBubble = document.createElement("div");
   newSpeechBubble.classList.add("speech", "speech-human");
