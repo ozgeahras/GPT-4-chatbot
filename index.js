@@ -19,14 +19,15 @@ const instructionObj = {
 document.addEventListener("submit", (e) => {
   e.preventDefault();
   const userInput = document.getElementById("user-input");
-  const inputContent = userInput.value.trim(); // Trim any leading or trailing whitespace
+  const inputContent = userInput.value.trim();
 
   if (inputContent) {
-    // Check if the input content is not empty
     const messageObj = {
       role: "user",
       content: inputContent,
     };
+
+    console.log("Pushing message to database:", messageObj);
 
     push(conversationInDb, messageObj)
       .then(() => {
@@ -41,6 +42,8 @@ document.addEventListener("submit", (e) => {
       .catch((error) => {
         console.error("Error pushing message to database:", error);
       });
+  } else {
+    console.log("Input content is empty");
   }
 });
 
