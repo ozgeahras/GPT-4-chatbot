@@ -11,7 +11,7 @@ console.log(
 
 const openai = new OpenAIApi(configuration);
 
-export async function handler(event, context) {
+export async function handler(event) {
   try {
     const { messages } = JSON.parse(event.body);
     const conversationArr = [...messages];
