@@ -5,6 +5,8 @@ const configuration = new Configuration({
   apiKey: process.env.VITE_OPENAI_API_KEY,
 });
 
+console.log(process.env.VITE_OPENAI_API_KEY);
+
 const openai = new OpenAIApi(configuration);
 
 export async function handler(event, context) {
