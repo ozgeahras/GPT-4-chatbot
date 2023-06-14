@@ -9,10 +9,6 @@ const openai = new OpenAIApi(configuration);
 export async function handler(event) {
   try {
     console.log("openai cagrildi");
-    console.log(
-      "process.env.VITE_OPENAI_API_KEY -->",
-      process.env.VITE_OPENAI_API_KEY
-    );
     const { messages } = JSON.parse(event.body);
     console.log("messages-->", messages);
     const conversationArr = [...messages];
@@ -31,9 +27,10 @@ export async function handler(event) {
       body: JSON.stringify({ reply }),
     };
   } catch (error) {
+    console.error("An error occurred:", error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: "Something went wrong" }, error),
+      body: JSON.stringify({ error: "Something went wrong", error }),
     };
   }
 }
