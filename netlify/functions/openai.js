@@ -9,11 +9,8 @@ const openai = new OpenAIApi(configuration);
 
 export async function handler(event) {
   try {
-    console.log("openai cagrildi");
     const { messages } = JSON.parse(event.body);
-    console.log("messages-->", messages);
     const conversationArr = [...messages];
-    console.log("conversationArr-->", conversationArr);
     const response = await openai.createChatCompletion({
       model: "gpt-3.5-turbo",
       messages: conversationArr,
@@ -22,13 +19,11 @@ export async function handler(event) {
     });
 
     const reply = response.data.choices[0].message.content;
-    console.log("reply-->", reply);
     return {
       statusCode: 200,
       body: JSON.stringify({ reply }),
     };
   } catch (error) {
-    console.error("An error occurred:", error.response);
     return {
       statusCode: 500,
       body: JSON.stringify({ error: "Something went wrong" }),

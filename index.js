@@ -23,7 +23,7 @@ document.addEventListener("submit", (e) => {
     role: "user",
     content: userInput.value,
   });
-  console.log("userInput-->", userInput.value);
+
   fetchReply();
   const newSpeechBubble = document.createElement("div");
   newSpeechBubble.classList.add("speech", "speech-human");
@@ -34,15 +34,10 @@ document.addEventListener("submit", (e) => {
 });
 
 function fetchReply() {
-  console.log("-fetch reply basladi-");
   get(conversationInDb).then(async (snapshot) => {
-    console.log("-get db basladi-");
     if (snapshot.exists()) {
-      console.log("-snapshot.exists-");
       const conversationArr = Object.values(snapshot.val());
-      console.log("-conversationArr-", conversationArr);
       conversationArr.unshift(instructionObj);
-      console.log("-conversationArr-", conversationArr);
       const response = await fetch("/.netlify/functions/openai", {
         method: "POST",
         body: JSON.stringify({ messages: conversationArr }),
@@ -53,7 +48,6 @@ function fetchReply() {
         role: "assistant",
         content: reply,
       });
-      console.log("-response-", reply);
       renderTypewriterText(reply);
     } else {
       console.log("No data available");
