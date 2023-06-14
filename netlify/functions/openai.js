@@ -1,7 +1,14 @@
-import openai from "../../openaiConfig.js";
+import { Configuration, OpenAIApi } from "openai";
 
 import { initializeApp } from "firebase/app";
 import { getDatabase, ref, push, get } from "firebase/database";
+
+const configuration = new Configuration({
+  organization: "org-8sBBKnnzpa0m1QQdIgYJtvhS",
+  apiKey: process.env.VITE_OPENAI_API_KEY,
+});
+delete configuration.baseOptions.headers["User-Agent"];
+const openai = new OpenAIApi(configuration);
 
 const appSettings = {
   databaseURL:
