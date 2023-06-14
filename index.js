@@ -3,7 +3,7 @@ import { getDatabase, ref, push, get, remove } from "firebase/database";
 
 const appSettings = {
   databaseURL:
-    "https://knowitall-openai-default-rtdb.europe-west1.firebasedatabase.app/",
+    "https://wise-owl-e4e5f-default-rtdb.europe-west1.firebasedatabase.app/",
 };
 
 const app = initializeApp(appSettings);
