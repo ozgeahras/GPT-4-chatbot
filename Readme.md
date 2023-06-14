@@ -16,6 +16,10 @@
 - [Github Repo](https://github.com/ozgeahras/GPT-4-chatbot)
 - [Demo](https://wise-owl-openai-chatbot.netlify.app/)
 
+## Adding to Mobile
+
+- Open the netlify app from browser on your mobile, click on menu, click on "Add to Home screen", give a name. You can see the app on your home screen.
+
 ## Author
 
 - [@ozgeahras](https://github.com/ozgeahras)
