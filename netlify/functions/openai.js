@@ -14,7 +14,9 @@ export async function handler(event) {
       process.env.VITE_OPENAI_API_KEY
     );
     const { messages } = JSON.parse(event.body);
+    console.log("messages-->", messages);
     const conversationArr = [...messages];
+    console.log("conversationArr-->", conversationArr);
     const response = await openai.createChatCompletion({
       model: "gpt-3.5-turbo",
       messages: conversationArr,
