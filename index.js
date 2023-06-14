@@ -19,17 +19,22 @@ const instructionObj = {
 document.addEventListener("submit", (e) => {
   e.preventDefault();
   const userInput = document.getElementById("user-input");
-  push(conversationInDb, {
-    role: "user",
-    content: userInput.value,
-  });
-  fetchReply();
-  const newSpeechBubble = document.createElement("div");
-  newSpeechBubble.classList.add("speech", "speech-human");
-  chatbotConversation.appendChild(newSpeechBubble);
-  newSpeechBubble.textContent = userInput.value;
-  userInput.value = "";
-  chatbotConversation.scrollTop = chatbotConversation.scrollHeight;
+  const inputContent = userInput.value.trim(); // Trim any leading or trailing whitespace
+
+  if (inputContent) {
+    // Check if the input content is not empty
+    push(conversationInDb, {
+      role: "user",
+      content: inputContent,
+    });
+    fetchReply();
+    const newSpeechBubble = document.createElement("div");
+    newSpeechBubble.classList.add("speech", "speech-human");
+    chatbotConversation.appendChild(newSpeechBubble);
+    newSpeechBubble.textContent = inputContent;
+    userInput.value = "";
+    chatbotConversation.scrollTop = chatbotConversation.scrollHeight;
+  }
 });
 
 function fetchReply() {
