@@ -1,6 +1,7 @@
 import { Configuration, OpenAIApi } from "openai";
 
 const configuration = new Configuration({
+  organization: "org-8sBBKnnzpa0m1QQdIgYJtvhS",
   apiKey: process.env.VITE_OPENAI_API_KEY,
 });
 
@@ -27,10 +28,10 @@ export async function handler(event) {
       body: JSON.stringify({ reply }),
     };
   } catch (error) {
-    console.error("An error occurred:", error);
+    console.error("An error occurred:", error.response);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: "Something went wrong", error }),
+      body: JSON.stringify({ error: "Something went wrong" }),
     };
   }
 }

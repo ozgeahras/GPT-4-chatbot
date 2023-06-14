@@ -50,7 +50,7 @@ function fetchReply() {
 
       const { reply } = await response.json();
       push(conversationInDb, {
-        role: "ai",
+        role: "assistant",
         content: reply,
       });
       console.log("-response-", reply);
