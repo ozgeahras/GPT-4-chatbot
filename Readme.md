@@ -9,7 +9,7 @@
 - OpenAIApi
 - import.meta.env
 - openai.createChatCompletion
-- gpt-3.5-turbo
+- gpt-4
 
 ### Links & Demo
 
