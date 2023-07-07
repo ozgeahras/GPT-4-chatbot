@@ -12,7 +12,7 @@ export async function handler(event) {
     const { messages } = JSON.parse(event.body);
     const conversationArr = [...messages];
     const response = await openai.createChatCompletion({
-      model: "gpt-3.5-turbo",
+      model: "gpt-4",
       messages: conversationArr,
       presence_penalty: 0,
       frequency_penalty: 0.3,
